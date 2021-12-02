@@ -11,39 +11,35 @@
  */
 
 /**
- * @var array $dblogs
+ * @var object $dblogs
  * @var BcAppView $this
  */
 ?>
-
-
-<?php if ($dblogs): ?>
+<?php if ($dblogs->count()): ?>
   <div class="bca-update-log">
-    <?php $this->passedArgs['action'] = 'ajax_index' ?>
     <?php $this->BcBaser->element('pagination', ['modules' => 4, 'options' => ['url' => ['action' => 'ajax_index']]]) ?>
     <ul class="clear bca-update-log__list">
-      <?php foreach($dblogs as $record): ?>
-        <li class="bca-update-log__list-item"><span
-            class="date"><?php echo $this->BcTime->format($record['Dblog']['created'], 'Y.m.d') ?></span>
-          <small><?php echo $this->BcTime->format($record['Dblog']['created'], 'H:i:s') ?>&nbsp;
-            <?php
-            $userName = $this->BcBaser->getUserName($record['User']);
-            if ($userName) {
-              echo '[' . h($userName) . ']';
-            }
-            ?>
+      <?php foreach($dblogs as $dblog): ?>
+        <li class="bca-update-log__list-item">
+          <span class="date">
+            <?php echo $this->BcTime->format($dblog->created, 'YYYY-MM-dd') ?>
+          </span>
+          <small><?php echo $this->BcTime->format($dblog->created, 'HH:mm:ss') ?>&nbsp;
+            <?php if ($dblog->user): ?>
+                <?php echo '[' . h($dblog->user->name) . ']' ?>
+            <?php endif ?>
           </small><br/>
-          <?php echo nl2br(h($record['Dblog']['name'])) ?></li>
+          <?php echo nl2br(h($dblog->message)) ?></li>
       <?php endforeach; ?>
     </ul>
-    <?php $this->BcBaser->element('list_num') ?>
-    <?php if (BcUtil::isAdminUser()): ?>
+    <?php $this->BcBaser->element('list_num', ['nums' => [5, 10, 20, 50]]) ?>
+    <?php if ($this->BcBaser->isAdminUser()): ?>
       <div class="submit clear bca-update-log__delete">
-        <?php $this->BcBaser->link(__d('baser', '削除'),
-          ['action' => 'del'],
-          ['class' => 'btn-gray button submit-token bca-btn', 'data-bca-btn-type' => 'delete'],
-          __d('baser', '最近の動きのログを削除します。いいですか？')
-        ) ?>
+        <?php echo $this->BcForm->postButton(__d('baser', 'ログを全て削除'), ['action' => 'delete_all'], [
+            'class' => 'btn-gray submit-token bca-btn',
+            'data-bca-btn-type' => 'delete',
+            'confirm' => __d('baser', '最近の動きのログを削除します。いいですか？')
+        ]) ?>
       </div>
     <?php endif ?>
   </div>

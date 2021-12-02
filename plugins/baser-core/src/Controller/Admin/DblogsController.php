@@ -51,6 +51,27 @@ class DblogsController extends BcAdminAppController
     }
 
     /**
+     * [ADMIN] ダッシュボードで一覧を取得
+     * @Checked
+     * @UnitTest
+     * @return void
+     */
+    public function ajax_index(DblogServiceInterface $DblogService, SiteConfigServiceInterface $siteConfigService)
+    {
+        $this->viewBuilder()->disableAutoLayout();
+        $this->setViewConditions('Dblog', ['default' => ['named' => [
+            'num' => $siteConfigService('admin_list_num')
+        ]]]);
+        $queryParams = $this->request->getQueryParams();
+        $this->paginate = [
+            'order' => ['Dblog.created ' => 'DESC', 'Dblog.id' => 'DESC'],
+            'limit' => (!empty($queryParams['num'])) ? $queryParams['num'] : 5
+        ];
+        $this->set('dblogs', $this->paginate($DblogService->getIndex($queryParams)));
+        $this->request = $this->request->withParsedBody($this->request->getQuery());
+    }
+
+    /**
      * [ADMIN] 最近の動きを削除
      *
      * @return void

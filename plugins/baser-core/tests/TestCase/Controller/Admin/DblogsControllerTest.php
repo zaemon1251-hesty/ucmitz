@@ -74,6 +74,26 @@ class DblogsControllerTest extends BcTestCase
     }
 
     /**
+     * Test ajax_index
+     */
+    public function testAjax_index()
+    {
+        $this->get('/baser/admin/baser-core/dblogs/ajax_index');
+        $this->assertResponseOk();
+    }
+
+    /**
+     * Test ajax_index pagination
+     */
+    public function testAjaxIndex_pagination()
+    {
+        $this->get('/baser/admin/baser-core/dblogs/ajax_index?num=1&page=2');
+        $this->assertResponseOk();
+        $this->get('/baser/admin/baser-core/dblogs/ajax_index?num=1&page=100');
+        $this->assertResponseError();
+    }
+
+    /**
      * Test delete_all
      */
     public function testDelete_all()

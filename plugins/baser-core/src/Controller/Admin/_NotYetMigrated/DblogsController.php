@@ -28,21 +28,6 @@ class DblogsController extends AppController
     public $components = ['BcAuth', 'Cookie', 'BcAuthConfigure'];
 
     /**
-     * 一覧を取得
-     */
-    public function admin_ajax_index()
-    {
-        $this->autoLayout = false;
-        $default = ['named' => ['num' => $this->siteConfigs['admin_list_num']]];
-        $this->setViewConditions('Dblog', ['default' => $default, 'action' => 'admin_index']);
-        $this->paginate = [
-            'order' => ['Dblog.created ' => 'DESC', 'Dblog.id' => 'DESC'],
-            'limit' => $this->passedArgs['num']
-        ];
-        $this->set('dblogs', $this->paginate('Dblog'));
-    }
-
-    /**
      * [ADMIN] 最近の動きを削除
      *
      * @return void
